@@ -36,6 +36,8 @@ public class CalculatorFrame extends JFrame implements ActionListener{
         screenField.setPreferredSize(new Dimension(300, 50));
         screenField.setHorizontalAlignment(JTextField.RIGHT);
 //        screenField.setEditable(false);
+        Font font = new Font("Arial", Font.PLAIN , 48);
+        screenField.setFont(font);
 
         screenPanel.add(screenField, BorderLayout.CENTER);
     }
@@ -110,8 +112,6 @@ public class CalculatorFrame extends JFrame implements ActionListener{
         setVisible(true);
     }
 
-
-
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
@@ -126,7 +126,7 @@ public class CalculatorFrame extends JFrame implements ActionListener{
             } else {
                 y += command;
             }
-            System.out.println("x : " + x + ", y : " + y);
+//            System.out.println("x : " + x + ", y : " + y);
         } else if (command.matches("[+\\-*/]")){
             if (!x.isEmpty()) {
                 calcul.append(command);
@@ -136,21 +136,21 @@ public class CalculatorFrame extends JFrame implements ActionListener{
             }
         } else if (command.equals("=")) {
             screenField.setText("");
-            System.out.println("calcul 1 : " + calcul);
-            System.out.println("operateur : " + operator);
-
+//            System.out.println("calcul 1 : " + calcul);
+//            System.out.println("operateur : " + operator);
             try {
                 double result = calculate(Double.parseDouble(x), Double.parseDouble(y), operator);
                 resetCalculator();
                 if (result == (long) result) {
                     screenField.setText(String.valueOf((long) result));
                 } else {
-                    screenField.setText(String.format("%.2f", result));
+                    screenField.setText(String.format("%.2f", result).replace(',','.'));
                 }
+                x = Double.toString(result);
+
             } catch (IllegalArgumentException iae) {
                 screenField.setText("∞");
             }
-
         } else if (command.equals("C")) {
             resetCalculator();
         }
