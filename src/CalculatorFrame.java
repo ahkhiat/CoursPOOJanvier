@@ -12,7 +12,8 @@ public class CalculatorFrame extends JFrame implements ActionListener{
 
     private StringBuilder calcul = new StringBuilder();
 
-    private String x, y;
+    private String x = "";
+    private String y = "";
     private String operator;
     private double result;
 
@@ -109,6 +110,8 @@ public class CalculatorFrame extends JFrame implements ActionListener{
         setVisible(true);
     }
 
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
@@ -123,80 +126,63 @@ public class CalculatorFrame extends JFrame implements ActionListener{
             } else {
                 y += command;
             }
-            System.out.println("x : " + x + "y : " + y);
+            System.out.println("x : " + x + ", y : " + y);
         } else if (command.matches("[+\\-*/]")){
-            calcul.append(command);
-            operator = command;
-
+            if (!x.isEmpty()) {
+                calcul.append(command);
+                operator = command;
+            } else {
+                System.out.println("Veuillez saisir un nombre avant l'opérateur.");
+            }
         } else if (command.equals("=")) {
             screenField.setText("");
             System.out.println("calcul 1 : " + calcul);
             System.out.println("operateur : " + operator);
 
+            try {
+                double result = calculate(Double.parseDouble(x), Double.parseDouble(y), operator);
+                resetCalculator();
+                if (result == (long) result) {
+                    screenField.setText(String.valueOf((long) result));
+                } else {
+                    screenField.setText(String.format("%.2f", result));
+                }
+            } catch (IllegalArgumentException iae) {
+                screenField.setText("∞");
+            }
+
         } else if (command.equals("C")) {
-            screenField.setText("");
-            calcul.setLength(0);
-            x = "";
-            y = "";
+            resetCalculator();
         }
 
-
-//        switch(command) {
-//            case "1":
-//                //
-//                break;
-//            case "2":
-//                //
-//                break;
-//            case "3":
-//                //
-//                break;
-//            case "4":
-//                //
-//                break;
-//            case "5":
-//                //
-//                break;
-//            case "6":
-//                //
-//                break;
-//            case "7":
-//                //
-//                break;
-//            case "8":
-//                //
-//                break;
-//            case "9":
-//                //
-//                break;
-//            case "0":
-//                //
-//                break;
-//            case "+":
-//                //
-//                break;
-//            case "-":
-//                //
-//                break;
-//            case "*":
-//                //
-//                break;
-//            case "/":
-//                //
-//                break;
-//            case "C":
-//                screenField.setText("");
-//                break;
-//            case "=":
-//                screenField.setText("");
-//                System.out.println(calcul);
-//                break;
-
-//        }
-
-
-
-
     }
+
+    private void resetCalculator() {
+        screenField.setText("");
+        calcul.setLength(0);
+        x = "";
+        y = "";
+        operator = null;
+    }
+
+    private double calculate(double x, double y, String operator) {
+        switch (operator) {
+            case "+":
+                return x + y;
+            case "-":
+                return x - y;
+            case "*":
+                return x * y;
+            case "/":
+                if (y != 0) {
+                    return x / y;
+                } else {
+                    throw new IllegalArgumentException("Division par zéro n'est pas autorisée.");
+                }
+            default:
+                throw new IllegalArgumentException("Opérateur inconnu : " + operator);
+        }
+    }
+
 }
 
